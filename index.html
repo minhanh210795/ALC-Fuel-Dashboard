@@ -343,7 +343,7 @@
                 </div>
             </div>
 
-            <!-- KHỐI MỞ RỘNG TRANG 1 & TRANG 2: BIỂU ĐỒ THỜI GIAN HOẠT ĐỘNG + BẢNG SO SÁNH ĐỊNH MỨC CÁC XE (CAO -> THẤP) -->
+            <!-- KHỐI MỞ RỘNG TRANG 1 & TRANG 2: BIỂU ĐỒ THỜI GIAN HOẠT ĐỘNG + BIỂU ĐỒ THANH NGANG SO SÁNH ĐỊNH MỨC CÁC XE -->
             <div id="overview-extra-section" style="display:block;">
                 <div class="extra-4-grid">
                     <div class="card-cool">
@@ -356,35 +356,19 @@
                     </div>
                 </div>
 
-                <!-- BẢNG SO SÁNH ĐỊNH MỨC TIÊU HAO NHIÊN LIỆU GIỮA CÁC XE (TỪ CAO NHẤT ĐẾN THẤP NHẤT) -->
+                <!-- BIỂU ĐỒ THANH NGANG SO SÁNH ĐỊNH MỨC TIÊU HAO NHIÊN LIỆU GIỮA CÁC XE (TỪ CAO NHẤT ĐẾN THẤP NHẤT) -->
                 <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                        <div style="font-weight:800; font-size:15px; color:#0077B6;" id="normCompareTitle">
-                            🏆 Bảng So sánh Định mức Tiêu hao Nhiên liệu giữa các Xe (Sắp xếp từ Cao nhất → Thấp nhất)
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <div style="font-weight:800; font-size:15.5px; color:#0b2239;" id="normCompareTitle">
+                            So sánh Định mức Tiêu hao Nhiên liệu giữa các Xe (Cao nhất → Thấp nhất) (L/100km)
                         </div>
-                        <span style="font-size:12px; color:#64748b; font-weight:600;">
-                            Đỏ: Vượt ≥ 2 L/100km | Cam: Vượt 0 → &lt;2 L/100km | Xanh dương: Đạt định mức (≤ 0)
-                        </span>
+                        <div style="display:flex; gap:14px; font-size:12px; font-weight:700;">
+                            <span style="color:#ef4444;">● Vượt ĐM ≥ 2 L/100km</span>
+                            <span style="color:#f59e0b;">● Trong dung sai (0 → &lt;2L)</span>
+                            <span style="color:#0AA2E8;">● Đạt định mức (≤ 0)</span>
+                        </div>
                     </div>
-                    <div style="max-height:360px; overflow-y:auto;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Hạng</th>
-                                    <th>Biển số xe</th>
-                                    <th>Dòng xe</th>
-                                    <th>Tổng Km vận hành</th>
-                                    <th>Tổng Dầu tiêu thụ (L)</th>
-                                    <th>Định mức QĐ (L/100km)</th>
-                                    <th>Định mức Thực tế (L/100km)</th>
-                                    <th>Chênh lệch ĐM (Thực tế - QĐ)</th>
-                                    <th>Lượng dầu vượt / tiết kiệm (L)</th>
-                                    <th>Đánh giá</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tblNormRankBody"></tbody>
-                        </table>
-                    </div>
+                    <div id="chartNormCompareBar" style="height:480px;"></div>
                 </div>
             </div>
 
@@ -453,7 +437,6 @@
     </div>
 
     <script>
-        // HÀM ESCAPE HTML CHỐNG LỖI GIAO DIỆN & XSS (THEO KHUYẾN NGHỊ AUDIT)
         function escapeHtml(val) {
             if (val === null || val === undefined) return '';
             return String(val)
@@ -464,21 +447,18 @@
                 .replace(/'/g, '&#39;');
         }
 
-        // HÀM BĂM MẬT KHẨU SHA-256 (KHÔNG LƯU MẬT KHẨU THÔ TRONG SOURCE CODE)
         async function sha256Hash(str) {
             if (window.crypto && window.crypto.subtle) {
                 const buf = new TextEncoder().encode(str);
                 const hashBuf = await window.crypto.subtle.digest("SHA-256", buf);
                 return Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, "0")).join("");
             }
-            // Fallback nếu mở qua giao thức cũ
             let h = 0;
             for (let i = 0; i < str.length; i++) h = Math.imul(31, h) + str.charCodeAt(i) | 0;
             return String(h);
         }
 
         // ================= QUẢN LÝ ĐĂNG NHẬP & PHÂN QUYỀN AN TOÀN =================
-        // Tài khoản mặc định ATT2026 sử dụng mã băm SHA-256 thay vì mật khẩu chữ thường
         const DEFAULT_ACCOUNTS = [
             {
                 id: "ATT2026",
@@ -504,7 +484,6 @@
                         if (!validList.some(u => u.id.toUpperCase() === "ATT2026")) {
                             validList.unshift(DEFAULT_ACCOUNTS[0]);
                         } else {
-                            // Đảm bảo tài khoản gốc ATT2026 luôn có pwHash chuẩn
                             validList.forEach((u, idx) => {
                                 if (u.id.toUpperCase() === "ATT2026" && !u.pwHash) {
                                     validList[idx] = DEFAULT_ACCOUNTS[0];
@@ -657,7 +636,6 @@
 
         function populatePeriodAndWeekSelectors() {
             const ySel = selYear.value;
-            // 1. Cập nhật danh sách Kỳ lương thuộc năm đang chọn
             const periodsInYear = [...new Set(YEAR_DATA.filter(r => r.nam === ySel).map(r => r.ky_luong))].sort();
             const selStart = document.getElementById('selStart');
             const selEnd = document.getElementById('selEnd');
@@ -668,7 +646,6 @@
                 selEnd.innerHTML += `<option value="${p}" ${idx === periodsInYear.length - 1 ? 'selected' : ''}>${p}</option>`;
             });
 
-            // 2. Cập nhật danh sách Tuần (Wxx/yy) thuộc năm đang chọn (Mặc định chọn 8 tuần gần nhất)
             const weekMap = {};
             WEEK_DATA.filter(r => r.nam === ySel).forEach(r => {
                 weekMap[r.tuan_code] = { short: r.tuan_short, label: r.tuan_label };
@@ -721,13 +698,11 @@
             const isWeek = (tabName === 'week_overview');
             document.getElementById('weekNotice').style.display = isWeek ? 'inline' : 'none';
             
-            // Chuyển đổi bộ lọc giữa Từ Tháng/Đến Tháng và Từ Tuần/Đến Tuần
             document.getElementById('boxFilterPeriodStart').style.display = isWeek ? 'none' : 'block';
             document.getElementById('boxFilterPeriodEnd').style.display = isWeek ? 'none' : 'block';
             document.getElementById('boxFilterWeekStart').style.display = isWeek ? 'block' : 'none';
             document.getElementById('boxFilterWeekEnd').style.display = isWeek ? 'block' : 'none';
 
-            // Hiển thị khối Thời gian hoạt động + Bảng xếp hạng định mức cho cả Trang 1 và Trang 2
             document.getElementById('overview-extra-section').style.display = (tabName === 'year_overview' || tabName === 'week_overview') ? 'block' : 'none';
 
             if (tabName === 'year_overview') {
@@ -765,7 +740,6 @@
                 const allWeekCodes = [...new Set(WEEK_DATA.filter(r => r.nam === ySel).map(r => r.tuan_code))].sort();
                 const minW = wStart <= wEnd ? wStart : wEnd;
                 const maxW = wStart <= wEnd ? wEnd : wStart;
-                // Lấy các tuần trong khoảng lọc và giới hạn tối đa 8 tuần liên tiếp gần nhất trong khoảng chọn
                 const selectedWeeks = allWeekCodes.filter(w => w >= minW && w <= maxW).slice(-8);
 
                 let filtered = WEEK_DATA.filter(r => {
@@ -1014,7 +988,7 @@
             }
         }
 
-        // VẼ 2 BIỂU ĐỒ THỜI GIAN HOẠT ĐỘNG & BẢNG SO SÁNH ĐỊNH MỨC GIỮA CÁC XE (CAO -> THẤP)
+        // VẼ 2 BIỂU ĐỒ THỜI GIAN HOẠT ĐỘNG & BIỂU ĐỒ THANH NGANG SO SÁNH ĐỊNH MỨC CÁC XE (CAO -> THẤP)
         function renderTimeChartsAndNormRanking(scopeTitle, xAxisLabels, arrChay, arrDung, filtered) {
             document.getElementById('timePieTitle').innerText = `TỈ LỆ THỜI GIAN HOẠT ĐỘNG ${scopeTitle}`;
             document.getElementById('timeBarTitle').innerText = `CHI TIẾT THỜI GIAN HOẠT ĐỘNG ${scopeTitle}`;
@@ -1061,7 +1035,7 @@
                 yaxis: {range: [0, Math.max(...arrTotTime, 50) * 1.18]}
             }, {responsive: true});
 
-            // BẢNG XẾP HẠNG & SO SÁNH ĐỊNH MỨC TIÊU HAO GIỮA CÁC XE (TỪ CAO NHẤT ĐẾN THẤP NHẤT)
+            // BIỂU ĐỒ THANH NGANG SO SÁNH ĐỊNH MỨC TIÊU HAO GIỮA CÁC XE (TỪ CAO NHẤT ĐẾN THẤP NHẤT)
             const byVeh = {};
             filtered.forEach(r => {
                 if (!byVeh[r.bien_so]) {
@@ -1078,57 +1052,65 @@
                 if (r.dinh_muc_qd > 0) byVeh[r.bien_so].dinh_muc_qd = r.dinh_muc_qd;
             });
 
+            // Sắp xếp tăng dần để trong Plotly Horizontal Bar thanh cao nhất nằm ở trên đỉnh (giống hệt ảnh mẫu)
             const rankList = Object.values(byVeh)
-                .filter(v => v.km > 0 || v.tieu_thu > 0)
+                .filter(v => v.km > 0 && v.tieu_thu > 0)
                 .map(v => {
-                    const dm_thuc_te = v.km > 0 ? (v.tieu_thu / v.km * 100.0) : 0.0;
+                    const dm_thuc_te = v.tieu_thu / v.km * 100.0;
                     const diff_dm = dm_thuc_te - v.dinh_muc_qd;
-                    // Tính lít vượt/tiết kiệm theo quy tắc dung sai +2L/100km của ALC
-                    let lit_lech = 0;
-                    if (v.km > 0) {
-                        if (dm_thuc_te > v.dinh_muc_qd + 2.0) {
-                            lit_lech = v.tieu_thu - (v.km * (v.dinh_muc_qd + 2.0) / 100.0);
-                        } else if (dm_thuc_te < v.dinh_muc_qd) {
-                            lit_lech = v.tieu_thu - (v.km * v.dinh_muc_qd / 100.0);
-                        }
-                    }
-                    return { ...v, dm_thuc_te, diff_dm, lit_lech };
+                    return { ...v, dm_thuc_te, diff_dm };
                 })
-                .sort((a, b) => b.dm_thuc_te - a.dm_thuc_te); // Sắp xếp từ cao nhất xuống thấp nhất
+                .sort((a, b) => a.dm_thuc_te - b.dm_thuc_te);
 
-            const rankBody = document.getElementById('tblNormRankBody');
-            rankBody.innerHTML = rankList.map((v, idx) => {
-                let normColor = '#0284c7';
-                let statusBadge = '<span class="badge bg-green">Đạt định mức</span>';
-                if (v.diff_dm >= 2.0) {
-                    normColor = '#dc2626';
-                    statusBadge = '<span class="badge bg-red">Vượt ĐM (≥ +2L)</span>';
-                } else if (v.diff_dm > 0) {
-                    normColor = '#ea580c';
-                    statusBadge = '<span class="badge bg-amber">Trong dung sai (+2L)</span>';
-                }
+            // Tự động điều chỉnh chiều cao khung biểu đồ theo số lượng xe để thanh ngang luôn đẹp và rõ ràng
+            const chartEl = document.getElementById('chartNormCompareBar');
+            const dynamicHeight = Math.max(360, rankList.length * 28 + 60);
+            chartEl.style.height = dynamicHeight + 'px';
 
-                const diffStr = (v.diff_dm >= 0 ? '+' : '') + v.diff_dm.toFixed(1) + ' L/100km';
-                const litLechRound = Math.round(v.lit_lech);
-                const litLechStr = litLechRound > 0
-                    ? `<span style="color:#dc2626; font-weight:700;">+${formatNum(litLechRound)} L</span>`
-                    : (litLechRound < 0
-                        ? `<span style="color:#0284c7; font-weight:700;">(${formatNum(Math.abs(litLechRound))} L)</span>`
-                        : '<span style="color:#64748b;">0 L</span>');
+            const barColors = rankList.map(v => {
+                if (v.diff_dm >= 2.0) return '#ef4444'; // Đỏ: vượt >= 2L
+                if (v.diff_dm > 0) return '#f59e0b';    // Cam: vượt 0 -> <2L
+                return '#0AA2E8';                       // Xanh dương: đạt định mức
+            });
 
-                return `<tr>
-                    <td><b>#${idx + 1}</b></td>
-                    <td style="color:#0077B6;"><b>${escapeHtml(v.bien_so)}</b></td>
-                    <td><span class="badge bg-gray">${escapeHtml(v.dong_xe)}</span></td>
-                    <td>${formatNum(v.km)} km</td>
-                    <td><b>${formatNum(v.tieu_thu)} L</b></td>
-                    <td>${v.dinh_muc_qd.toFixed(1)}</td>
-                    <td style="color:${normColor}; font-weight:800; font-size:13.5px;">${v.dm_thuc_te.toFixed(1)}</td>
-                    <td style="color:${normColor}; font-weight:700;">${diffStr}</td>
-                    <td>${litLechStr}</td>
-                    <td>${statusBadge}</td>
-                </tr>`;
-            }).join('');
+            const maxVal = rankList.length > 0 ? Math.max(...rankList.map(v => v.dm_thuc_te)) : 50;
+
+            Plotly.newPlot('chartNormCompareBar', [{
+                x: rankList.map(v => Number(v.dm_thuc_te.toFixed(1))),
+                y: rankList.map(v => v.bien_so),
+                type: 'bar',
+                orientation: 'h',
+                marker: { color: barColors },
+                text: rankList.map(v => `${v.dm_thuc_te.toFixed(1)} L/100km (QĐ: ${v.dinh_muc_qd.toFixed(0)})`),
+                textposition: 'outside',
+                textfont: { size: 11.5, weight: 'bold', color: '#1e293b' },
+                customdata: rankList.map(v => [
+                    v.dong_xe,
+                    v.dinh_muc_qd.toFixed(1),
+                    (v.diff_dm >= 0 ? '+' : '') + v.diff_dm.toFixed(1),
+                    formatNum(v.km),
+                    formatNum(v.tieu_thu)
+                ]),
+                hovertemplate: '<b>Xe: %{y} (%{customdata[0]})</b><br>' +
+                               'Định mức thực tế: <b>%{x:.1f} L/100km</b><br>' +
+                               'Định mức quy định: %{customdata[1]} L/100km (Lệch: %{customdata[2]} L/100km)<br>' +
+                               'Quãng đường: %{customdata[3]} km | Tiêu thụ: %{customdata[4]} L<extra></extra>'
+            }], {
+                margin: { t: 10, l: 95, r: 125, b: 35 },
+                xaxis: {
+                    title: 'Định mức tiêu hao thực tế (Lít / 100km)',
+                    range: [0, maxVal * 1.22],
+                    gridcolor: '#f1f5f9',
+                    zerolinecolor: '#0f172a',
+                    zerolinewidth: 1.5
+                },
+                yaxis: {
+                    automargin: true,
+                    tickfont: { size: 12.5, color: '#1e293b' }
+                },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)'
+            }, {responsive: true});
         }
 
         function renderPriceTab(ySel, pStart, pEnd) {
