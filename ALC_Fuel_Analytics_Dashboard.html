@@ -16,7 +16,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { display: flex; background-color: #F2F8FC; color: #1e293b; min-height: 100vh; overflow-x: hidden; }
         
-        /* HIỆU ỨNG CHUYỂN ĐỘNG MƯỢT MÀ GIỮA CÁC TRANG */
         @keyframes fadeSlideUp {
             0% { opacity: 0; transform: translateY(10px); }
             100% { opacity: 1; transform: translateY(0); }
@@ -25,7 +24,6 @@
             animation: fadeSlideUp 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
         
-        /* SIDEBAR CHUẨN TONE LOGO ALC */
         .sidebar { 
             width: 278px; 
             background: linear-gradient(180deg, var(--alc-blue-deep) 0%, var(--alc-blue-sidebar) 100%); 
@@ -64,7 +62,6 @@
             display: flex; align-items: center; justify-content: space-between; 
         }
         
-        /* NỘI DUNG CHÍNH */
         .main { margin-left: 278px; flex: 1; padding: 24px 32px; transition: all 0.25s ease; }
         .top-header { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -126,7 +123,6 @@
         .bg-green { background: #d1fae5; color: #047857; }
         .bg-gray { background: #e2e8f0; color: #475569; }
 
-        /* MÀN HÌNH ĐĂNG NHẬP */
         #alc-login-overlay {
             position: fixed; inset: 0; 
             background: radial-gradient(circle at top right, #0077B6 0%, #0B2239 55%, #061320 100%);
@@ -252,7 +248,7 @@
             </div>
             <div style="display:flex; align-items:center; gap:12px;">
                 <span id="badgeInfo" style="background:#E6F6FD; color:#0077B6; border:1px solid #90e0ef; padding:7px 14px; border-radius:20px; font-size:12px; font-weight:700;">
-                    ● Đã đồng bộ 31 Xe Đội Xe ALC (FreightLiner / ShacMan / MaxxForce / Howo)
+                    ● Đã đồng bộ 31 Xe ALC (Cập nhật đến: 18/10/2026)
                 </span>
             </div>
         </div>
@@ -336,7 +332,7 @@
                 </div>
             </div>
 
-            <!-- 4 BẢNG BIỂU ĐỒ BỔ SUNG CHO TRANG 1 (TỈ LỆ HÀNG/RỖNG & THỜI GIAN HOẠT ĐỘNG) -->
+            <!-- 4 BẢNG BIỂU ĐỒ BỔ SUNG CHO TRANG 1 -->
             <div id="year-extra-4-charts" style="display:block;">
                 <div class="extra-4-grid">
                     <div class="card-warm">
@@ -1017,7 +1013,6 @@
             </tr>`).join('');
         }
 
-        // BẢNG CHI TIẾT DỮ LIỆU NHIÊN LIỆU (ĐÃ BỎ CỘT TÀI XẾ & CẬP NHẬT ĐÚNG DÒNG XE)
         function renderStandardTable(filtered, isWeek) {
             const thead = document.getElementById('tblHead');
             const tbody = document.getElementById('tblBody');
@@ -1038,16 +1033,14 @@
             tbody.innerHTML = filtered.slice(0, 350).map(r => {
                 const colTime = isWeek ? `<b>${r.tuan_label.split(' (')[0]}</b>` : `<b>${r.ky_luong}</b>`;
                 
-                // 1. Logic tô màu Cột Định mức (L/100km): so với định mức quy định (r.dinh_muc_qd)
                 const diffNorm = r.dm_thuc_te - (r.dinh_muc_qd || 36.0);
-                let normColor = '#0284c7'; // Từ 0 trở xuống: Xanh dương
+                let normColor = '#0284c7';
                 if (diffNorm >= 2.0) {
-                    normColor = '#dc2626'; // Cao hơn từ 2 lít trở lên: Đỏ
+                    normColor = '#dc2626';
                 } else if (diffNorm > 0) {
-                    normColor = '#ea580c'; // Lớn hơn 0 đến ít hơn 2 lít: Cam
+                    normColor = '#ea580c';
                 }
 
-                // 2. Logic hiển thị & tô màu Cột Lệch Dibee - GPS (Số âm màu đỏ bỏ trong ngoặc, số dương màu xanh lá)
                 const lechVal = Math.round(r.lech_do_dau);
                 let lechText = '0 L';
                 let lechColor = '#16a34a';
@@ -1059,10 +1052,6 @@
                     lechColor = '#16a34a';
                 }
 
-                // 3. Logic tô màu Cột % Chênh lệch:
-                // - Đỏ: >= 3%
-                // - Xanh lá: > -3% và < 3%
-                // - Xanh dương: <= -3%
                 const pctVal = r.pct_lech_do;
                 let pctColor = '#16a34a';
                 if (pctVal >= 3.0) {
