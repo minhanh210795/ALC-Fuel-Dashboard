@@ -4,5 +4,11 @@
     "pwHash": "07a95f3c8e58d21872596765ab476143bc21d46bc3533d08b532f4868f4162c3",
     "name": "Quản trị viên Hệ thống (ALC)",
     "role": "Admin"
+  },
+  {
+    "id": "TrangVTH@alcvietnam.com",
+    "pwHash": "932f3c1b56257ce8539ac269d7aab42550dacf8818d075f0bdf1990562aae3ef",
+    "name": "Kế toán ATT",
+    "role": "Viewer"
   }
 ]
