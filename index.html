@@ -202,10 +202,13 @@
                 ⚠️ Tài khoản hoặc mật khẩu không chính xác!
             </div>
 
-            <button class="alc-btn-primary" style="width:100%; padding:13px; letter-spacing:0.5px;" onclick="handleAlcLogin()">
+            <button class="alc-btn-primary" id="btn-login-submit" style="width:100%; padding:13px; letter-spacing:0.5px;" onclick="handleAlcLogin()">
                 ĐĂNG NHẬP HỆ THỐNG →
             </button>
-            <div style="margin-top:18px; font-size:11.5px; color:#64748b; font-weight:500;">
+            <div id="login-sync-status" style="margin-top:14px; font-size:11.5px; color:#0284c7; font-weight:600;">
+                🔄 Đang đồng bộ danh sách tài khoản từ Cloud...
+            </div>
+            <div style="margin-top:6px; font-size:11.5px; color:#64748b; font-weight:500;">
                 © 2026 ALC Corporation. Bảo mật dữ liệu nội bộ.
             </div>
         </div>
@@ -266,7 +269,6 @@
                         <label>NĂM DỮ LIỆU</label>
                         <select id="selYear" onchange="onYearFilterChange()"></select>
                     </div>
-                    <!-- Bộ lọc Kỳ lương (Trang 1, 3, 4, 5) -->
                     <div class="filter-group" id="boxFilterPeriodStart">
                         <label id="lblStart">TỪ THÁNG</label>
                         <select id="selStart" onchange="renderAll()"></select>
@@ -275,7 +277,6 @@
                         <label id="lblEnd">ĐẾN THÁNG</label>
                         <select id="selEnd" onchange="renderAll()"></select>
                     </div>
-                    <!-- Bộ lọc Số tuần Wxx/yy (Chỉ hiện ở Trang 2) -->
                     <div class="filter-group" id="boxFilterWeekStart" style="display:none;">
                         <label>TỪ TUẦN (Wxx/yy)</label>
                         <select id="selWeekStart" onchange="renderAll()"></select>
@@ -343,7 +344,7 @@
                 </div>
             </div>
 
-            <!-- KHỐI MỞ RỘNG TRANG 1 & TRANG 2: BIỂU ĐỒ THỜI GIAN HOẠT ĐỘNG + BIỂU ĐỒ THANH NGANG SO SÁNH ĐỊNH MỨC CÁC XE -->
+            <!-- KHỐI MỞ RỘNG TRANG 1 & TRANG 2 -->
             <div id="overview-extra-section" style="display:block;">
                 <div class="extra-4-grid">
                     <div class="card-cool">
@@ -356,7 +357,7 @@
                     </div>
                 </div>
 
-                <!-- BIỂU ĐỒ THANH NGANG SO SÁNH ĐỊNH MỨC TIÊU HAO NHIÊN LIỆU GIỮA CÁC XE (TỪ CAO NHẤT ĐẾN THẤP NHẤT) -->
+                <!-- BIỂU ĐỒ THANH NGANG SO SÁNH ĐỊNH MỨC TIÊU HAO NHIÊN LIỆU GIỮA CÁC XE -->
                 <div class="card">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                         <div style="font-weight:800; font-size:15.5px; color:#0b2239;" id="normCompareTitle">
@@ -384,8 +385,26 @@
             </div>
         </div>
 
-        <!-- KHỐI QUẢN LÝ TÀI KHOẢN & PHÂN QUYỀN (MENU SỐ 6) -->
+        <!-- KHỐI QUẢN LÝ TÀI KHOẢN & ĐỒNG BỘ TRỰC TIẾP LÊN GITHUB (MENU SỐ 6) -->
         <div id="admin-content-wrapper" style="display:none;">
+            <!-- Cấu hình GitHub Cloud Sync -->
+            <div class="card alc-user-form" style="border-left: 5px solid #10b981; background:#f8fafc;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <div>
+                        <h4 style="color:#047857; font-size:15px; margin:0;">☁️ Đồng bộ Tài khoản Trực tuyến lên GitHub (`users.json`)</h4>
+                        <div style="font-size:12px; color:#475569; margin-top:3px;">
+                            Khi nhập GitHub Token (1 lần), mọi tài khoản bạn thêm/xóa tại đây sẽ tự động cập nhật thẳng lên kho <b>minhanh210795/ALC-Fuel-Dashboard</b> để đăng nhập được ngay ở bất kỳ máy tính hay điện thoại nào.
+                        </div>
+                    </div>
+                    <span id="github-sync-badge" class="badge bg-amber">Chưa cấu hình Token</span>
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr auto auto; gap:10px; align-items:center;">
+                    <input id="gh-token-input" type="password" placeholder="Dán mã GitHub Personal Access Token (ghp_...) vào đây để bật tự động đẩy lên GitHub...">
+                    <button class="alc-btn-primary" style="background:#0f172a;" onclick="saveGithubToken()">💾 Lưu Token</button>
+                    <button class="alc-btn-primary" style="background:#10b981;" onclick="pushUsersToGithub(true)">☁️ Đẩy danh sách lên GitHub ngay</button>
+                </div>
+            </div>
+
             <div class="card alc-user-form">
                 <h4 style="margin-bottom:14px; color:#0077B6; font-size:15px;">➕ Tạo thêm tài khoản truy cập mới vào hệ thống ALC</h4>
                 <div style="display:grid; grid-template-columns: 1fr 1fr 1.3fr 1fr auto; gap:12px; align-items:end;">
@@ -408,16 +427,18 @@
                             <option value="Admin">Quản trị viên (Admin)</option>
                         </select>
                     </div>
-                    <button class="alc-btn-primary" onclick="addAlcUser()">+ Tạo tài khoản</button>
+                    <button class="alc-btn-primary" onclick="addAlcUser()">+ Tạo & Đồng bộ Online</button>
                 </div>
             </div>
 
             <div class="card">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                    <h4 style="margin:0; color:#0b2239; font-size:15px;">📋 Danh sách Tài khoản được phép đăng nhập</h4>
-                    <button class="alc-btn-primary" style="background:#10b981; padding:8px 14px; font-size:12.5px;" onclick="copyUsersForPython()">
-                        📋 Copy danh sách tài khoản (Đã mã hóa SHA-256)
-                    </button>
+                    <h4 style="margin:0; color:#0b2239; font-size:15px;">📋 Danh sách Tài khoản được phép đăng nhập (Đọc từ `users.json` trên GitHub)</h4>
+                    <div style="display:flex; gap:8px;">
+                        <button class="alc-btn-primary" style="background:#0284c7; padding:8px 14px; font-size:12.5px;" onclick="loadRemoteUsersFromGithub(true)">
+                            🔄 Tải lại từ GitHub
+                        </button>
+                    </div>
                 </div>
                 <table>
                     <thead>
@@ -437,6 +458,11 @@
     </div>
 
     <script>
+        const GH_OWNER = "minhanh210795";
+        const GH_REPO = "ALC-Fuel-Dashboard";
+        const GH_BRANCH = "main";
+        const USERS_FILE_PATH = "users.json";
+
         function escapeHtml(val) {
             if (val === null || val === undefined) return '';
             return String(val)
@@ -458,15 +484,161 @@
             return String(h);
         }
 
-        // ================= QUẢN LÝ ĐĂNG NHẬP & PHÂN QUYỀN AN TOÀN =================
-        const DEFAULT_ACCOUNTS = [
-            {
-                id: "ATT2026",
-                pwHash: "07a95f3c8e58d21872596765ab476143bc21d46bc3533d08b532f4868f4162c3",
-                name: "Quản trị viên Hệ thống (ALC)",
-                role: "Admin"
+        // ================= QUẢN LÝ TÀI KHOẢN & ĐỒNG BỘ FILE users.json TRÊN GITHUB =================
+        const DEFAULT_ACCOUNTS = [{"id": "ATT2026", "pwHash": "07a95f3c8e58d21872596765ab476143bc21d46bc3533d08b532f4868f4162c3", "name": "Quản trị viên Hệ thống (ALC)", "role": "Admin"}];
+        let CLOUD_ACCOUNTS = null;
+
+        function ensureDefaultAdminInList(list) {
+            const adminDefault = DEFAULT_ACCOUNTS[0];
+            const validList = (Array.isArray(list) ? list : []).filter(u => u && typeof u.id === "string" && u.id.trim() !== "");
+            if (!validList.some(u => u.id.toUpperCase() === "ATT2026")) {
+                validList.unshift(adminDefault);
             }
-        ];
+            return validList;
+        }
+
+        // Tải trực tiếp file users.json từ GitHub Pages / Raw GitHub để mọi máy tính/điện thoại đều nhận tài khoản mới nhất
+        async function loadRemoteUsersFromGithub(showAlert = false) {
+            const statusEl = document.getElementById("login-sync-status");
+            const cacheBuster = "?t=" + Date.now();
+            const urlsToTry = [
+                `./${USERS_FILE_PATH}${cacheBuster}`,
+                `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${USERS_FILE_PATH}${cacheBuster}`
+            ];
+
+            for (const url of urlsToTry) {
+                try {
+                    const res = await fetch(url, { cache: "no-store" });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (Array.isArray(data) && data.length > 0) {
+                            CLOUD_ACCOUNTS = ensureDefaultAdminInList(data);
+                            localStorage.setItem("alc_dashboard_accounts", JSON.stringify(CLOUD_ACCOUNTS));
+                            if (statusEl) {
+                                statusEl.style.color = "#059669";
+                                statusEl.innerText = `✓ Đã đồng bộ ${CLOUD_ACCOUNTS.length} tài khoản từ Cloud`;
+                            }
+                            renderUserTable();
+                            if (showAlert) alert(`Đã tải thành công ${CLOUD_ACCOUNTS.length} tài khoản mới nhất từ GitHub!`);
+                            return CLOUD_ACCOUNTS;
+                        }
+                    }
+                } catch (e) {}
+            }
+
+            if (statusEl) {
+                statusEl.style.color = "#64748b";
+                statusEl.innerText = "● Đang sử dụng danh sách tài khoản mặc định";
+            }
+            return getAlcAccounts();
+        }
+
+        function getAlcAccounts() {
+            if (CLOUD_ACCOUNTS && Array.isArray(CLOUD_ACCOUNTS)) {
+                return ensureDefaultAdminInList(CLOUD_ACCOUNTS);
+            }
+            const saved = localStorage.getItem("alc_dashboard_accounts");
+            if (saved) {
+                try {
+                    return ensureDefaultAdminInList(JSON.parse(saved));
+                } catch(e) {}
+            }
+            return ensureDefaultAdminInList(DEFAULT_ACCOUNTS);
+        }
+
+        function saveAlcAccounts(list) {
+            const clean = ensureDefaultAdminInList(list);
+            CLOUD_ACCOUNTS = clean;
+            localStorage.setItem("alc_dashboard_accounts", JSON.stringify(clean));
+        }
+
+        function saveGithubToken() {
+            const tok = document.getElementById("gh-token-input").value.trim();
+            if (!tok) {
+                localStorage.removeItem("alc_gh_pat");
+                updateGithubTokenBadge();
+                alert("Đã xóa GitHub Token khỏi trình duyệt.");
+                return;
+            }
+            localStorage.setItem("alc_gh_pat", tok);
+            document.getElementById("gh-token-input").value = "";
+            updateGithubTokenBadge();
+            alert("Đã lưu GitHub Token! Từ bây giờ mỗi khi bạn Tạo hoặc Xóa tài khoản, hệ thống sẽ tự động cập nhật file users.json thẳng lên GitHub.");
+        }
+
+        function updateGithubTokenBadge() {
+            const tok = localStorage.getItem("alc_gh_pat");
+            const badge = document.getElementById("github-sync-badge");
+            if (!badge) return;
+            if (tok) {
+                badge.className = "badge bg-green";
+                badge.innerText = "✓ Đã kết nối GitHub Auto-Sync";
+            } else {
+                badge.className = "badge bg-amber";
+                badge.innerText = "Chưa cấu hình Token";
+            }
+        }
+
+        // Đẩy trực tiếp danh sách tài khoản vào file users.json trên GitHub qua GitHub REST API
+        async function pushUsersToGithub(manualClick = false) {
+            const tok = localStorage.getItem("alc_gh_pat");
+            if (!tok) {
+                if (manualClick) {
+                    alert("Bạn chưa nhập GitHub Personal Access Token (ghp_...) ở ô bên trái. Vui lòng dán Token và bấm 'Lưu Token' trước!");
+                }
+                return false;
+            }
+
+            const apiUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${USERS_FILE_PATH}`;
+            const headers = {
+                "Authorization": `Bearer ${tok}`,
+                "Accept": "application/vnd.github+json",
+                "Content-Type": "application/json"
+            };
+
+            try {
+                // 1. Lấy SHA hiện tại của file users.json trên GitHub (nếu đã tồn tại)
+                let currentSha = null;
+                const getRes = await fetch(`${apiUrl}?ref=${GH_BRANCH}&t=${Date.now()}`, { headers });
+                if (getRes.ok) {
+                    const fileInfo = await getRes.json();
+                    currentSha = fileInfo.sha;
+                }
+
+                // 2. Mã hóa nội dung JSON sang Base64 chuẩn UTF-8
+                const accounts = getAlcAccounts();
+                const jsonStr = JSON.stringify(accounts, null, 2);
+                const utf8Bytes = new TextEncoder().encode(jsonStr);
+                let binaryStr = "";
+                utf8Bytes.forEach(b => binaryStr += String.fromCharCode(b));
+                const contentBase64 = btoa(binaryStr);
+
+                const bodyPayload = {
+                    message: `Update users.json from ALC Web Admin (${accounts.length} users)`,
+                    content: contentBase64,
+                    branch: GH_BRANCH
+                };
+                if (currentSha) bodyPayload.sha = currentSha;
+
+                const putRes = await fetch(apiUrl, {
+                    method: "PUT",
+                    headers,
+                    body: JSON.stringify(bodyPayload)
+                });
+
+                if (putRes.ok) {
+                    alert("✅ Đã tự động cập nhật file 'users.json' lên GitHub thành công! Mọi máy tính và điện thoại khác đều có thể đăng nhập bằng tài khoản mới ngay bây giờ.");
+                    return true;
+                } else {
+                    const errData = await putRes.json();
+                    alert("⚠️ Không thể đẩy lên GitHub: " + (errData.message || putRes.statusText));
+                    return false;
+                }
+            } catch (err) {
+                alert("⚠️ Lỗi kết nối tới GitHub API: " + err.message);
+                return false;
+            }
+        }
 
         function toggleAlcPasswordVisibility() {
             const pwInput = document.getElementById("alc-login-pw");
@@ -474,37 +646,13 @@
             pwInput.type = showChk.checked ? "text" : "password";
         }
 
-        function getAlcAccounts() {
-            const saved = localStorage.getItem("alc_dashboard_accounts");
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    if (Array.isArray(parsed)) {
-                        const validList = parsed.filter(u => u && typeof u.id === "string" && u.id.trim() !== "");
-                        if (!validList.some(u => u.id.toUpperCase() === "ATT2026")) {
-                            validList.unshift(DEFAULT_ACCOUNTS[0]);
-                        } else {
-                            validList.forEach((u, idx) => {
-                                if (u.id.toUpperCase() === "ATT2026" && !u.pwHash) {
-                                    validList[idx] = DEFAULT_ACCOUNTS[0];
-                                }
-                            });
-                        }
-                        return validList;
-                    }
-                } catch(e) {}
-            }
-            return DEFAULT_ACCOUNTS;
-        }
-
-        function saveAlcAccounts(list) {
-            localStorage.setItem("alc_dashboard_accounts", JSON.stringify(list));
-        }
-
         async function handleAlcLogin() {
             const inputId = document.getElementById("alc-login-id").value.trim();
             const inputPw = document.getElementById("alc-login-pw").value.trim();
             const keepLogin = document.getElementById("alc-keep-login").checked;
+
+            // Luôn ưu tiên tải danh sách tài khoản mới nhất từ file users.json trên GitHub trước khi kiểm tra
+            await loadRemoteUsersFromGithub(false);
             const accounts = getAlcAccounts();
             const inputHash = await sha256Hash(inputPw);
 
@@ -544,6 +692,7 @@
             document.getElementById("sb-user-role").innerText = user.name || "ALC Member";
             const adminNav = document.getElementById("nav-admin-item");
             adminNav.style.display = (user.role === "Admin") ? "flex" : "none";
+            updateGithubTokenBadge();
             renderUserTable();
         }
 
@@ -575,6 +724,7 @@
             const role = document.getElementById("new-user-role").value;
 
             if (!id || !pw) { alert("Vui lòng nhập đầy đủ Tài khoản (ID) và Mật khẩu!"); return; }
+            await loadRemoteUsersFromGithub(false);
             const accounts = getAlcAccounts();
             if (accounts.some(u => u.id && u.id.toLowerCase() === id.toLowerCase())) {
                 alert("Tài khoản ID này đã tồn tại!"); return;
@@ -586,24 +736,25 @@
             document.getElementById("new-user-pw").value = "";
             document.getElementById("new-user-name").value = "";
             renderUserTable();
-            alert(`Đã tạo thành công tài khoản: ${id}`);
+
+            // Tự động đẩy thẳng lên GitHub nếu đã cấu hình Token
+            const pushed = await pushUsersToGithub(false);
+            if (!pushed) {
+                alert(`Đã tạo tài khoản '${id}' trên máy này! Để mọi máy tính khác đăng nhập được ngay mà không cần chạy lại Python, hãy nhập GitHub Token ở khung phía trên rồi bấm 'Đẩy danh sách lên GitHub ngay'.`);
+            }
         }
 
-        function deleteAlcUser(id) {
+        async function deleteAlcUser(id) {
             if (!confirm(`Bạn có chắc chắn muốn xóa tài khoản "${id}"?`)) return;
             const accounts = getAlcAccounts().filter(u => u.id !== id);
             saveAlcAccounts(accounts);
             renderUserTable();
+            await pushUsersToGithub(false);
         }
 
-        function copyUsersForPython() {
-            const accounts = getAlcAccounts();
-            const codeStr = "const DEFAULT_ACCOUNTS = " + JSON.stringify(accounts, null, 4) + ";";
-            navigator.clipboard.writeText(codeStr);
-            alert("Đã copy danh sách tài khoản (đã mã hóa SHA-256) vào bộ nhớ tạm!");
-        }
-
-        window.addEventListener("DOMContentLoaded", () => {
+        window.addEventListener("DOMContentLoaded", async () => {
+            updateGithubTokenBadge();
+            await loadRemoteUsersFromGithub(false);
             const savedUser = sessionStorage.getItem("alc_current_user") || localStorage.getItem("alc_persistent_user");
             if (savedUser) {
                 try {
@@ -687,7 +838,8 @@
                 document.getElementById('report-content-wrapper').style.display = 'none';
                 document.getElementById('admin-content-wrapper').style.display = 'block';
                 document.getElementById('pageTitle').innerText = 'Quản lý Tài khoản & Phân quyền Người dùng';
-                document.getElementById('pageDesc').innerText = 'Thêm mới, xóa hoặc phân quyền các tài khoản được phép truy cập vào hệ thống báo cáo ALC.';
+                document.getElementById('pageDesc').innerText = 'Tạo mới hoặc xóa tài khoản và tự động đồng bộ file users.json lên GitHub Cloud.';
+                updateGithubTokenBadge();
                 renderUserTable();
                 return;
             }
@@ -988,7 +1140,6 @@
             }
         }
 
-        // VẼ 2 BIỂU ĐỒ THỜI GIAN HOẠT ĐỘNG & BIỂU ĐỒ THANH NGANG SO SÁNH ĐỊNH MỨC CÁC XE (CAO -> THẤP)
         function renderTimeChartsAndNormRanking(scopeTitle, xAxisLabels, arrChay, arrDung, filtered) {
             document.getElementById('timePieTitle').innerText = `TỈ LỆ THỜI GIAN HOẠT ĐỘNG ${scopeTitle}`;
             document.getElementById('timeBarTitle').innerText = `CHI TIẾT THỜI GIAN HOẠT ĐỘNG ${scopeTitle}`;
@@ -1035,7 +1186,6 @@
                 yaxis: {range: [0, Math.max(...arrTotTime, 50) * 1.18]}
             }, {responsive: true});
 
-            // BIỂU ĐỒ THANH NGANG SO SÁNH ĐỊNH MỨC TIÊU HAO GIỮA CÁC XE (TỪ CAO NHẤT ĐẾN THẤP NHẤT)
             const byVeh = {};
             filtered.forEach(r => {
                 if (!byVeh[r.bien_so]) {
@@ -1052,7 +1202,6 @@
                 if (r.dinh_muc_qd > 0) byVeh[r.bien_so].dinh_muc_qd = r.dinh_muc_qd;
             });
 
-            // Sắp xếp tăng dần để trong Plotly Horizontal Bar thanh cao nhất nằm ở trên đỉnh (giống hệt ảnh mẫu)
             const rankList = Object.values(byVeh)
                 .filter(v => v.km > 0 && v.tieu_thu > 0)
                 .map(v => {
@@ -1062,15 +1211,14 @@
                 })
                 .sort((a, b) => a.dm_thuc_te - b.dm_thuc_te);
 
-            // Tự động điều chỉnh chiều cao khung biểu đồ theo số lượng xe để thanh ngang luôn đẹp và rõ ràng
             const chartEl = document.getElementById('chartNormCompareBar');
             const dynamicHeight = Math.max(360, rankList.length * 28 + 60);
             chartEl.style.height = dynamicHeight + 'px';
 
             const barColors = rankList.map(v => {
-                if (v.diff_dm >= 2.0) return '#ef4444'; // Đỏ: vượt >= 2L
-                if (v.diff_dm > 0) return '#f59e0b';    // Cam: vượt 0 -> <2L
-                return '#0AA2E8';                       // Xanh dương: đạt định mức
+                if (v.diff_dm >= 2.0) return '#ef4444';
+                if (v.diff_dm > 0) return '#f59e0b';
+                return '#0AA2E8';
             });
 
             const maxVal = rankList.length > 0 ? Math.max(...rankList.map(v => v.dm_thuc_te)) : 50;
