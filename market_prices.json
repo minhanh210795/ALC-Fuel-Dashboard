@@ -1,0 +1,161 @@
+{
+  "updated_at": "15:00 ngày 22/10/2026",
+  "petrolimex_table": [
+    {
+      "mat_hang": "Xăng E10 RON 95 Mức 5",
+      "dvt": "Đồng/lít",
+      "vung_1": 25710,
+      "chenh_lech": -1780
+    },
+    {
+      "mat_hang": "Xăng E10 RON 95 Mức 3",
+      "dvt": "Đồng/lít",
+      "vung_1": 24910,
+      "chenh_lech": -1810
+    },
+    {
+      "mat_hang": "Xăng E5 RON 92 Mức 2",
+      "dvt": "Đồng/lít",
+      "vung_1": 25060,
+      "chenh_lech": -1610
+    },
+    {
+      "mat_hang": "Điêzen 0,001S Mức 5",
+      "dvt": "Đồng/lít",
+      "vung_1": 30650,
+      "chenh_lech": 400
+    },
+    {
+      "mat_hang": "Điêzen 0,05S Mức 2",
+      "dvt": "Đồng/lít",
+      "vung_1": 29250,
+      "chenh_lech": 450
+    },
+    {
+      "mat_hang": "Dầu hỏa 2 - K",
+      "dvt": "Đồng/lít",
+      "vung_1": 30050,
+      "chenh_lech": 380
+    },
+    {
+      "mat_hang": "Dầu Mazut 3,5S",
+      "dvt": "Đồng/kg",
+      "vung_1": 23070,
+      "chenh_lech": 250
+    },
+    {
+      "mat_hang": "Dầu Mazut 180 0,5S",
+      "dvt": "Đồng/kg",
+      "vung_1": 29070,
+      "chenh_lech": 290
+    }
+  ],
+  "pvoil_table": [
+    {
+      "mat_hang": "Xăng E10 RON 95-III",
+      "dvt": "Đồng/lít",
+      "gia": 24860,
+      "chenh_lech": -1810
+    },
+    {
+      "mat_hang": "Xăng E5 RON 92-II",
+      "dvt": "Đồng/lít",
+      "gia": 25010,
+      "chenh_lech": -1610
+    },
+    {
+      "mat_hang": "Dầu DO 0,05S-II",
+      "dvt": "Đồng/lít",
+      "gia": 29200,
+      "chenh_lech": 450
+    },
+    {
+      "mat_hang": "Dầu DO 0,001S-V",
+      "dvt": "Đồng/lít",
+      "gia": 30600,
+      "chenh_lech": 400
+    }
+  ],
+  "do_history": [
+    {
+      "ngay": "2025-12-26",
+      "petrolimex": 17250,
+      "pvoil": 17250
+    },
+    {
+      "ngay": "2026-01-15",
+      "petrolimex": 17600,
+      "pvoil": 17550
+    },
+    {
+      "ngay": "2026-02-05",
+      "petrolimex": 18240,
+      "pvoil": 18200
+    },
+    {
+      "ngay": "2026-03-05",
+      "petrolimex": 27050,
+      "pvoil": 27000
+    },
+    {
+      "ngay": "2026-04-02",
+      "petrolimex": 35150,
+      "pvoil": 35100
+    },
+    {
+      "ngay": "2026-05-07",
+      "petrolimex": 27680,
+      "pvoil": 27630
+    },
+    {
+      "ngay": "2026-06-11",
+      "petrolimex": 26190,
+      "pvoil": 26140
+    },
+    {
+      "ngay": "2026-07-02",
+      "petrolimex": 22410,
+      "pvoil": 22360
+    },
+    {
+      "ngay": "2026-08-06",
+      "petrolimex": 27390,
+      "pvoil": 27340
+    },
+    {
+      "ngay": "2026-09-01",
+      "petrolimex": 28080,
+      "pvoil": 28030
+    },
+    {
+      "ngay": "2026-09-10",
+      "petrolimex": 28480,
+      "pvoil": 28430
+    },
+    {
+      "ngay": "2026-09-17",
+      "petrolimex": 29940,
+      "pvoil": 29890
+    },
+    {
+      "ngay": "2026-09-24",
+      "petrolimex": 30490,
+      "pvoil": 30440
+    },
+    {
+      "ngay": "2026-10-01",
+      "petrolimex": 29620,
+      "pvoil": 29570
+    },
+    {
+      "ngay": "2026-10-15",
+      "petrolimex": 28800,
+      "pvoil": 28750
+    },
+    {
+      "ngay": "2026-10-22",
+      "petrolimex": 29250,
+      "pvoil": 29200
+    }
+  ]
+}
